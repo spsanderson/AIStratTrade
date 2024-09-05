@@ -5,7 +5,7 @@ library(tidyquant)
 library(dplyr)
 
 # Define the momentum trading strategy
-momentum_strategy <- function(prices, short_window = 50, long_window = 200) {
+momentum_strategy <- function(prices, short_window = 50, long_window = short_window * 4) {
   # Calculate short-term and long-term moving averages
   prices <- prices %>%
     mutate(short_ma = SMA(adjusted, n = short_window),
@@ -71,8 +71,10 @@ NVDA_strategy %>%
     ) +
   labs(title = "Momentum Trading Strategy for NVIDIA",
        x = "Date",
-       y = "Adjusted Price") +
+       y = "Adjusted Price",
+       fill = "Signal") +
   theme_minimal() +
   scale_color_identity() +
   # Map fill colors
   scale_fill_manual(values = c("hold" = "white", "buy" = "green", "sell" = "red")) 
+
