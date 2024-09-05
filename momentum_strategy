@@ -22,12 +22,12 @@ momentum_strategy <- function(prices, short_window = 50, long_window = short_win
 
 # Get NVIDIA's historical prices
 NVDA <- tq_get("NVDA",
-               from = "2020-01-01",
-               to = "2023-11-01",
+               from = "2010-01-01",
+               to = Sys.Date(),
                get = "stock.prices")
 
 # Apply the momentum trading strategy
-NVDA_strategy <- momentum_strategy(NVDA)
+NVDA_strategy <- momentum_strategy(NVDA, 52)
 
 # Print the last few rows of the data
 tail(NVDA_strategy)
