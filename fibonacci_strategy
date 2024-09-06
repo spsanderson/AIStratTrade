@@ -1,4 +1,4 @@
-# Chat Link: https://you.com/search?q=1+-+Propose+an+R+code+implementation+of+a+fibonacci+trading+strategy%2C+use+tidyverse+syntax.%0A2+-...&cid=c1_dbedb8f7-6893-4799-97be-5b710d24ed0e&tbm=youchat
+# Transcrip: https://you.com/search?q=1+-+Propose+an+R+code+implementation+of+a+fibonacci+trading+strategy%2C+use+tidyverse+syntax.%0A2+-...&cid=c1_dbedb8f7-6893-4799-97be-5b710d24ed0e&tbm=youchat
 
 library(tidyverse)
 library(tidyquant)
