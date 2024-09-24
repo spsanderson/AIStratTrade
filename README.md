@@ -51,12 +51,12 @@ tail(NVDA)
 #> # A tibble: 6 × 9
 #>   symbol date        open  high   low close    volume adjusted signals
 #>   <chr>  <date>     <dbl> <dbl> <dbl> <dbl>     <dbl>    <dbl>   <dbl>
-#> 1 NVDA   2024-08-28  128.  128.  123.  126. 448101100     126.       0
-#> 2 NVDA   2024-08-29  121.  124.  117.  118. 453023300     118.       0
-#> 3 NVDA   2024-08-30  120.  122.  117.  119. 333751600     119.       1
-#> 4 NVDA   2024-09-03  116.  116.  107.  108  474040800     108        0
-#> 5 NVDA   2024-09-04  105.  113.  104.  106. 372470300     106.       0
-#> 6 NVDA   2024-09-05  105.  110.  105.  107. 305774900     107.       1
+#> 1 NVDA   2024-09-16  117.  118.  114.  117. 248772300     117.       0
+#> 2 NVDA   2024-09-17  118.  119.  115.  116. 231925900     116.       0
+#> 3 NVDA   2024-09-18  116.  118.  113.  113. 310318900     113.       0
+#> 4 NVDA   2024-09-19  117.  120.  117.  118. 293506400     118.       1
+#> 5 NVDA   2024-09-20  117.  119.  115.  116  382462400     116        0
+#> 6 NVDA   2024-09-23  117.  117.  115.  116. 205808500     116.       0
 
 # Plot the closing prices and trading signals
 ggplot(NVDA, aes(x = date, y = adjusted)) +
@@ -101,12 +101,12 @@ tail(NVDA_strategy)
 #> # A tibble: 6 × 11
 #>   symbol date        open  high   low close    volume adjusted short_ma long_ma
 #>   <chr>  <date>     <dbl> <dbl> <dbl> <dbl>     <dbl>    <dbl>    <dbl>   <dbl>
-#> 1 NVDA   2024-08-28  128.  128.  123.  126. 448101100     126.     117.    116.
-#> 2 NVDA   2024-08-29  121.  124.  117.  118. 453023300     118.     117.    116.
-#> 3 NVDA   2024-08-30  120.  122.  117.  119. 333751600     119.     118.    116.
-#> 4 NVDA   2024-09-03  116.  116.  107.  108  474040800     108      118.    116.
-#> 5 NVDA   2024-09-04  105.  113.  104.  106. 372470300     106.     118.    117.
-#> 6 NVDA   2024-09-05  105.  110.  105.  107. 305774900     107.     119.    117.
+#> 1 NVDA   2024-09-16  117.  118.  114.  117. 248772300     117.     118.    119.
+#> 2 NVDA   2024-09-17  118.  119.  115.  116. 231925900     116.     118.    119.
+#> 3 NVDA   2024-09-18  116.  118.  113.  113. 310318900     113.     117.    119.
+#> 4 NVDA   2024-09-19  117.  120.  117.  118. 293506400     118.     116.    119.
+#> 5 NVDA   2024-09-20  117.  119.  115.  116  382462400     116      116.    119.
+#> 6 NVDA   2024-09-23  117.  117.  115.  116. 205808500     116.     115.    119.
 #> # ℹ 1 more variable: signal <chr>
 
 # Create a data frame for buy/sell points with colors
@@ -136,3 +136,68 @@ ggplot(NVDA_strategy, aes(x = date, y = adjusted)) +
 ```
 
 <img src="man/figures/README-momentum-strategy-1.png" width="100%" />
+
+## Strategy 3: Moving Average Crossover Strategy
+
+The moving average crossover strategy is a trend-following strategy that
+aims to capture gains in a financial instrument by buying when a
+short-term moving average crosses above a long-term moving average and
+selling when the short-term moving average crosses below the long-term
+moving average. The strategy is based on the idea that assets that have
+performed well in the past will continue to perform well in the future.
+
+``` r
+source("moving_average_strategy.R")
+
+# Define the stocks
+symbols <- c("AAPL", "MSFT", "NVDA", "F", "GM", "TSLA") 
+
+# Download historical data (replace with your preferred source if needed)
+start_date <- "2020-01-01"
+end_date <- "2023-11-24" 
+data <- tq_get(symbols,
+               from = start_date,
+               to = end_date,
+               get = "stock.prices")
+
+# Plotting for AAPL as an example
+ggplot(data_with_signals, aes(x = date, y = adjusted)) +
+  facet_wrap(~symbol, scales = "free_y") +
+  geom_line() +
+  geom_line(aes(y = short_ma), color = "blue") +
+  geom_line(aes(y = long_ma), color = "red") +
+  labs(title = "Moving Average Trading Strategy for: AAPL, MSFT, NVDA, F, GM, TSLA",
+       x = "Date",
+       y = "Adjusted Price") +
+  theme_minimal() 
+```
+
+<img src="man/figures/README-moving-average-strategy-1.png" width="100%" />
+
+``` r
+
+# Apply the strategy
+short_window <- 20
+long_window <- 50 
+data_with_signals <- data |>
+  calculate_ma_strategy(short_window, long_window)
+
+first_signals <- data_with_signals |>
+  get_first_signals()
+
+ggplot(data_with_signals, aes(x = date, y = adjusted)) +
+  facet_wrap(~symbol, scales = "free_y") +
+  geom_line() +
+  geom_line(aes(y = short_ma), color = "blue") +
+  geom_line(aes(y = long_ma), color = "red") +
+  geom_point(data = first_signals %>% filter(signal == "buy"), 
+             color = "green", size = 3) +
+  geom_point(data = first_signals %>% filter(signal == "sell"), 
+             color = "red", size = 3) +
+  labs(title = "Moving Average Trading Strategy for: AAPL, MSFT, NVDA, F, GM",
+       x = "Date",
+       y = "Adjusted Price") +
+  theme_minimal()
+```
+
+<img src="man/figures/README-moving-average-strategy-2.png" width="100%" />
