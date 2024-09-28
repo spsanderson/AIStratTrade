@@ -3,7 +3,7 @@ AI Trading Strategies in R
 
 ## Purpose
 
-This repository contains R code implementations of two popular trading
+This repository contains R code implementations of some popular trading
 strategies: the Fibonacci trading strategy and the momentum trading
 strategy. Both strategies are implemented using the `tidyverse` syntax
 and are demonstrated on historical stock price data for NVIDIA (NVDA).
